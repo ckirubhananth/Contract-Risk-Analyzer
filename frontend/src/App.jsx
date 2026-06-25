@@ -26,6 +26,8 @@ export default function App() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedClause, setSelectedClause] = useState(null);
   const [showTrajectory, setShowTrajectory] = useState(false);
+  const [progressPercent, setProgressPercent] = useState(0);
+  const [statusText, setStatusText] = useState("");
   
   // Results State
   const [results, setResults] = useState(null);
@@ -70,27 +72,117 @@ export default function App() {
 
   const uploadAndAnalyze = async (selectedFile) => {
     setAnalysisState("analyzing");
+    setProgressPercent(0);
+    setStatusText("Uploading and extracting contract text...");
     
     const formData = new FormData();
     formData.append("file", selectedFile);
     
     try {
       const apiBaseUrl = import.meta.env.DEV ? "http://127.0.0.1:8000" : "";
-      const response = await fetch(`${apiBaseUrl}/api/analyze`, {
+      
+      // Phase 1: Ingest contract
+      const ingestResponse = await fetch(`${apiBaseUrl}/api/ingest`, {
         method: "POST",
         body: formData,
       });
       
-      if (!response.ok) {
-        const errData = await response.json();
-        throw new Error(errData.detail || "Analysis failed.");
+      if (!ingestResponse.ok) {
+        const errData = await ingestResponse.json();
+        throw new Error(errData.detail || "Ingestion failed.");
       }
       
-      const data = await response.json();
-      setResults(data);
+      const ingestData = await ingestResponse.json();
+      const rawClauses = ingestData.clauses;
+      const filename = ingestData.filename;
+      let trajectorySteps = ingestData.steps;
+      
+      setProgressPercent(10);
+      
+      if (rawClauses.length === 0) {
+        throw new Error("No clauses could be segmented from this document.");
+      }
+      
+      // Phase 2: Sequential batch analysis (5 clauses per batch)
+      const batchSize = 5;
+      const totalClauses = rawClauses.length;
+      const evaluatedClauses = [];
+      
+      const chunks = [];
+      for (let i = 0; i < totalClauses; i += batchSize) {
+        chunks.push(rawClauses.slice(i, i + batchSize));
+      }
+      
+      const totalChunks = chunks.length;
+      
+      for (let i = 0; i < totalChunks; i++) {
+        const chunk = chunks[i];
+        const chunkStart = i * batchSize + 1;
+        const chunkEnd = Math.min((i + 1) * batchSize, totalClauses);
+        
+        setStatusText(`Evaluating clauses ${chunkStart}-${chunkEnd} of ${totalClauses}...`);
+        
+        const batchResponse = await fetch(`${apiBaseUrl}/api/analyze-batch`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ clauses: chunk }),
+        });
+        
+        if (!batchResponse.ok) {
+          const errData = await batchResponse.json();
+          throw new Error(errData.detail || "Batch analysis failed.");
+        }
+        
+        const batchData = await batchResponse.json();
+        evaluatedClauses.push(...batchData.clauses);
+        
+        // Add trajectory logs for this batch
+        trajectorySteps.push({
+          "step_number": 3 + i,
+          "agent_name": `RiskAnalysisAgent-Batch${i+1}`,
+          "thought": `Classifying and scoring clauses ${chunkStart} to ${chunkEnd} using Gemini.`,
+          "action": {
+            "tool_name": "gemini:analyze_batch",
+            "arguments": { "clause_count": chunk.length }
+          },
+          "result": { "evaluated_count": batchData.clauses.length },
+          "latency_ms": batchData.latency_ms
+        });
+        
+        // Progress runs from 10% to 90%
+        const percent = Math.round(10 + ((i + 1) / totalChunks) * 80);
+        setProgressPercent(percent);
+      }
+      
+      // Phase 3: Aggregation & Summarization
+      setStatusText("Generating executive summary and visual charts...");
+      setProgressPercent(95);
+      
+      const summaryResponse = await fetch(`${apiBaseUrl}/api/summarize`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          filename: filename,
+          clauses: evaluatedClauses,
+          trajectory_steps: trajectorySteps
+        }),
+      });
+      
+      if (!summaryResponse.ok) {
+        const errData = await summaryResponse.json();
+        throw new Error(errData.detail || "Aggregation failed.");
+      }
+      
+      const finalData = await summaryResponse.json();
+      setProgressPercent(100);
+      setResults(finalData);
       setAnalysisState("completed");
-      if (data.clauses && data.clauses.length > 0) {
-        setSelectedClause(data.clauses[0]);
+      if (finalData.clauses && finalData.clauses.length > 0) {
+        setSelectedClause(finalData.clauses[0]);
       }
     } catch (err) {
       console.error(err);
@@ -192,17 +284,27 @@ export default function App() {
               <h2>Analyzing Contract Document...</h2>
               <p className="file-analyzing-name">Processing: {file?.name}</p>
               
+              <div className="progress-container" style={{ width: '100%', marginTop: '20px', marginBottom: '20px' }}>
+                <div className="progress-bar-bg" style={{ width: '100%', height: '8px', backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: '4px', overflow: 'hidden' }}>
+                  <div className="progress-bar-fill" style={{ width: `${progressPercent}%`, height: '100%', backgroundColor: 'var(--accent-purple)', transition: 'width 0.3s ease', borderRadius: '4px', boxShadow: '0 0 8px var(--accent-purple-glow)' }}></div>
+                </div>
+                <div className="progress-status-row" style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+                  <span>{statusText}</span>
+                  <span style={{ fontWeight: 'bold', color: 'var(--accent-purple)' }}>{progressPercent}%</span>
+                </div>
+              </div>
+
               <div className="loading-steps">
-                <div className="loading-step active">
-                  <Layers className="step-icon spinner-small" />
+                <div className={`loading-step ${progressPercent >= 10 ? "active" : ""}`}>
+                  <Layers className={`step-icon ${progressPercent >= 10 && progressPercent < 90 ? "spinner-small" : ""}`} />
                   <span>Segmenting contract into clause nodes...</span>
                 </div>
-                <div className="loading-step">
-                  <Brain className="step-icon" />
+                <div className={`loading-step ${progressPercent >= 15 ? "active" : ""}`}>
+                  <Brain className={`step-icon ${progressPercent >= 15 && progressPercent < 90 ? "spinner-small" : ""}`} />
                   <span>Evaluating risks against YAML rubric...</span>
                 </div>
-                <div className="loading-step">
-                  <PieChart className="step-icon" />
+                <div className={`loading-step ${progressPercent >= 90 ? "active" : ""}`}>
+                  <PieChart className={`step-icon ${progressPercent >= 90 && progressPercent < 100 ? "spinner-small" : ""}`} />
                   <span>Compiling visualizations and summary...</span>
                 </div>
               </div>

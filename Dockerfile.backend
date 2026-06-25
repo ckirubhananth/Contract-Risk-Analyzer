@@ -12,8 +12,9 @@ COPY . .
 # Expose backend port
 EXPOSE 8000
 
-# Set Python path to find root modules
+# Set Python path to find root modules and disable buffering
 ENV PYTHONPATH=/app
+ENV PYTHONUNBUFFERED=1
 
 # Start backend FastAPI app
 CMD ["uvicorn", "backend.app:app", "--host", "0.0.0.0", "--port", "8000"]

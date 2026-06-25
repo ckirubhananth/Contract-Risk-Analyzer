@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ContractClauseRisk",
+  "type": "object",
+  "required": [
+    "clause_id",
+    "text",
+    "risk_category",
+    "risk_level",
+    "score",
+    "explanation",
+    "confidence"
+  ],
+  "properties": {
+    "clause_id": {
+      "type": "string",
+      "description": "Unique identifier for the clause (e.g., C12)"
+    },
+    "text": {
+      "type": "string",
+      "description": "Original clause text"
+    },
+    "risk_category": {
+      "type": "string",
+      "enum": [
+        "Indemnity",
+        "Limitation of Liability",
+        "Termination",
+        "Confidentiality",
+        "Payment Terms",
+        "Governing Law",
+        "Arbitration / Dispute Resolution",
+        "Other"
+      ],
+      "description": "Risk taxonomy category"
+    },
+    "risk_level": {
+      "type": "string",
+      "enum": [
+        "Low",
+        "Medium",
+        "High"
+      ],
+      "description": "Overall risk severity"
+    },
+    "score": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9,
+      "description": "Risk score assigned by rubric (1-9)"
+    },
+    "explanation": {
+      "type": "string",
+      "description": "Human-readable justification for the risk level"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Model confidence (0-1)"
+    }
+  },
+  "additionalProperties": false
+}

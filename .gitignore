@@ -1,0 +1,33 @@
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Python cache and build files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.tox/
+.venv/
+venv/
+ENV/
+
+# Node/React dependencies and builds
+node_modules/
+dist/
+build/
+
+# Local app outputs and temporary uploads
+outputs/
+temp_uploads/
+
+# IDE files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp

@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AgentTrajectory",
+  "type": "object",
+  "required": [
+    "session_id",
+    "orchestrator_id",
+    "steps",
+    "metrics"
+  ],
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "description": "Unique identifier for the analysis session"
+    },
+    "orchestrator_id": {
+      "type": "string",
+      "description": "PID or identifier of the Orchestrator"
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "step_number",
+          "agent_name",
+          "thought",
+          "action",
+          "result"
+        ],
+        "properties": {
+          "step_number": {
+            "type": "integer"
+          },
+          "agent_name": {
+            "type": "string"
+          },
+          "thought": {
+            "type": "string",
+            "description": "Agent internal reasoning text"
+          },
+          "action": {
+            "type": "object",
+            "required": [
+              "tool_name",
+              "arguments"
+            ],
+            "properties": {
+              "tool_name": {
+                "type": "string"
+              },
+              "arguments": {
+                "type": "object"
+              }
+            }
+          },
+          "result": {
+            "type": "object",
+            "description": "Tool return values or message payload"
+          },
+          "latency_ms": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "required": [
+        "total_tokens",
+        "total_latency_ms",
+        "cost_usd"
+      ],
+      "properties": {
+        "total_tokens": {
+          "type": "integer"
+        },
+        "total_latency_ms": {
+          "type": "integer"
+        },
+        "cost_usd": {
+          "type": "number"
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

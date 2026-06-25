@@ -1,0 +1,30 @@
+eval_judge:
+  model: "gemini-1.5-pro"
+  temperature: 0.0
+  system_instructions: |
+    You are an expert legal AI auditor. Your task is to evaluate the quality of the Contract Risk Analyzer's output.
+    You will compare the model's generated classification, risk level, and explanation against a Golden Dataset.
+  metrics:
+    category_alignment:
+      description: "Checks if the predicted risk category matches the golden target."
+      scoring: "binary (1 for match, 0 for mismatch)"
+    level_alignment:
+      description: "Checks if the predicted risk level matches the golden target."
+      scoring: "binary (1 for match, 0 for mismatch)"
+    explanation_quality:
+      description: "Evaluates if the explanation highlights the correct risk triggers."
+      scoring: "scale 1-5"
+      rubric:
+        5: "Excellent. Identifies exact risk triggers and quotes relevant terms."
+        3: "Moderate. States risk correctly but misses specific contractual context."
+        1: "Poor. Vague or incorrect reasoning."
+  prompt_template: |
+    Golden Clause Text: "{{text}}"
+    Golden Category: "{{expected_category}}"
+    Golden Risk Level: "{{expected_level}}"
+    
+    Predicted Category: "{{predicted_category}}"
+    Predicted Risk Level: "{{predicted_level}}"
+    Predicted Explanation: "{{predicted_explanation}}"
+    
+    Score the category alignment, level alignment, and explanation quality based on the system instructions.

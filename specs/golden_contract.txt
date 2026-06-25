@@ -1,0 +1,7 @@
+The provider shall indemnify, defend, and hold harmless the client from and against any and all claims, liabilities, losses, damages, and expenses, including reasonable attorneys' fees, without limit.
+
+In no event shall either party's aggregate liability under this Agreement exceed one hundred thousand dollars ($100,000).
+
+Either party may terminate this agreement at any time, for any reason or no reason, upon ninety (90) days written notice to the other party.
+
+This Agreement shall be governed by, and construed in accordance with, the laws of the State of Delaware, without regard to its conflict of laws principles.

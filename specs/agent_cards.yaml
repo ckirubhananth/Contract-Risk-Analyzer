@@ -1,0 +1,62 @@
+agents:
+  Orchestrator:
+    role: "System Coordinator"
+    description: "Accepts user goals, plans the execution path, spawns sub-agents, and compiles final outputs."
+    inputs:
+      - goal: "string"
+      - contract_path: "string"
+    outputs:
+      - status: "string"
+      - report_path: "string"
+    permissions:
+      - "spawn_agent"
+      - "read_file"
+      - "write_file"
+  IngestionAgent:
+    role: "Document Ingestion & Text Extraction"
+    description: "Accepts raw PDF, DOCX, or TXT files, extracts textual content, and stores it in workspace."
+    inputs:
+      - file_path: "string"
+    outputs:
+      - extracted_text: "string"
+    tools:
+      - "mcp:file_ingestion"
+      - "mcp:text_extraction"
+  SegmentationAgent:
+    role: "Clause Segmentation Specialist"
+    description: "Splits raw contract text into a sequence of ordered clauses using heuristics and sentence-boundary NLP."
+    inputs:
+      - raw_text: "string"
+    outputs:
+      - clauses: "array of objects"
+    tools:
+      - "regex_parser"
+      - "sentence_splitter"
+  RiskAnalysisAgent:
+    role: "Legal Risk Classifier & Scorer"
+    description: "Applies the ML classifier and YAML rubric to classify risk categories, severities, explanations, and confidence."
+    inputs:
+      - clauses: "array of objects"
+    outputs:
+      - evaluated_clauses: "array of objects"
+    tools:
+      - "ml:logistic_regression"
+      - "ml:distilbert"
+      - "rubric_lookup"
+  SummaryAgent:
+    role: "Human-Readable Executive Summary Generator"
+    description: "Synthesizes the scored clauses to generate top risks, recommend review areas, and calculate an overall contract score."
+    inputs:
+      - evaluated_clauses: "array of objects"
+    outputs:
+      - executive_summary: "string"
+      - overall_score: "number"
+  VisualizationAgent:
+    role: "A2UI Visual Asset Generator"
+    description: "Generates risk distribution bar-charts, category frequency charts, and heatmaps in JSON format for UI rendering."
+    inputs:
+      - evaluated_clauses: "array of objects"
+    outputs:
+      - chart_data: "object"
+    tools:
+      - "mcp:chart_generator"

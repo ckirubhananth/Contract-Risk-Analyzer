@@ -1,0 +1,117 @@
+# Risk Scoring Rubric
+# Each clause receives a risk level based on severity and impact.
+# The rubric is consulted by the Risk Analysis Agent.
+
+rubric:
+  "Indemnity":
+    High:
+      criteria:
+        - "Broad indemnity without limitation"
+        - "Indemnity extends to indirect damages"
+      score: 9
+    Medium:
+      criteria:
+        - "Indemnity with reasonable cap"
+        - "Indemnity limited to direct damages"
+      score: 5
+    Low:
+      criteria:
+        - "Standard indemnity with clear exclusions"
+      score: 2
+  "Limitation of Liability":
+    High:
+      criteria:
+        - "Liability limited to zero"
+      score: 9
+    Medium:
+      criteria:
+        - "Liability cap below $100k"
+      score: 5
+    Low:
+      criteria:
+        - "Liability cap reasonable relative to contract value"
+      score: 2
+  "Termination":
+    High:
+      criteria:
+        - "Termination without cause and no notice period"
+      score: 8
+    Medium:
+      criteria:
+        - "Termination with cause only"
+      score: 4
+    Low:
+      criteria:
+        - "Standard termination with 30-day notice"
+      score: 1
+  "Confidentiality":
+    High:
+      criteria:
+        - "No exception for legal disclosure"
+      score: 7
+    Medium:
+      criteria:
+        - "Limited exceptions for internal use"
+      score: 3
+    Low:
+      criteria:
+        - "Standard confidentiality with reasonable carve-outs"
+      score: 1
+  "Payment Terms":
+    High:
+      criteria:
+        - "Pre-payment required without delivery guarantees"
+        - "Payment terms exceed 90 days with no interest for late payments"
+        - "Unilateral right to change fees without notice"
+      score: 7
+    Medium:
+      criteria:
+        - "Payment terms between 45 and 90 days"
+        - "Vague billing dispute resolution processes"
+      score: 4
+    Low:
+      criteria:
+        - "Standard Net 30 payment terms with reasonable interest for late payments"
+        - "Clear billing dispute resolution"
+      score: 1
+  "Governing Law":
+    High:
+      criteria:
+        - "Governing law of a foreign jurisdiction with unfavorable legal framework"
+        - "Unspecified governing law"
+      score: 8
+    Medium:
+      criteria:
+        - "Governing law of a neutral jurisdiction with moderate legal complexity"
+      score: 4
+    Low:
+      criteria:
+        - "Governing law matches the primary operating jurisdiction of both parties"
+      score: 1
+  "Arbitration / Dispute Resolution":
+    High:
+      criteria:
+        - "Mandatory binding arbitration in an inconvenient venue with all costs borne by one party"
+        - "Waiver of class action rights without exceptions"
+      score: 8
+    Medium:
+      criteria:
+        - "Arbitration required but with split costs and neutral venue"
+      score: 4
+    Low:
+      criteria:
+        - "Standard mediation followed by court proceedings, or mutual agreement on neutral arbitration"
+      score: 2
+  "Other":
+    High:
+      criteria:
+        - "Any uncategorized clause containing severe liability, indemnification, or termination risks"
+      score: 7
+    Medium:
+      criteria:
+        - "Any uncategorized clause containing moderate financial or operational risks"
+      score: 4
+    Low:
+      criteria:
+        - "Standard boilerplate, preamble, or general provisions with no legal risk"
+      score: 1

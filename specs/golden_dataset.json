@@ -1,0 +1,56 @@
+[
+  {
+    "clause_id": "G1",
+    "text": "The provider shall indemnify, defend, and hold harmless the client from and against any and all claims, liabilities, losses, damages, and expenses, including reasonable attorneys' fees, without limit.",
+    "expected": {
+      "risk_category": "Indemnity",
+      "risk_level": "High",
+      "score": 9,
+      "explanation_keywords": [
+        "without limit",
+        "all claims",
+        "broad"
+      ]
+    }
+  },
+  {
+    "clause_id": "G2",
+    "text": "In no event shall either party's aggregate liability under this Agreement exceed one hundred thousand dollars ($100,000).",
+    "expected": {
+      "risk_category": "Limitation of Liability",
+      "risk_level": "Medium",
+      "score": 5,
+      "explanation_keywords": [
+        "aggregate liability",
+        "100,000"
+      ]
+    }
+  },
+  {
+    "clause_id": "G3",
+    "text": "Either party may terminate this agreement at any time, for any reason or no reason, upon ninety (90) days written notice to the other party.",
+    "expected": {
+      "risk_category": "Termination",
+      "risk_level": "Low",
+      "score": 1,
+      "explanation_keywords": [
+        "notice",
+        "90 days",
+        "terminate"
+      ]
+    }
+  },
+  {
+    "clause_id": "G4",
+    "text": "This Agreement shall be governed by, and construed in accordance with, the laws of the State of Delaware, without regard to its conflict of laws principles.",
+    "expected": {
+      "risk_category": "Governing Law",
+      "risk_level": "Low",
+      "score": 1,
+      "explanation_keywords": [
+        "Delaware",
+        "governed"
+      ]
+    }
+  }
+]

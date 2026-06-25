@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AgentMessage",
+  "type": "object",
+  "required": [
+    "sender",
+    "type",
+    "payload",
+    "correlation_id"
+  ],
+  "properties": {
+    "sender": {
+      "type": "string",
+      "description": "Unique identifier of the sending agent"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "request",
+        "response",
+        "event",
+        "error"
+      ],
+      "description": "Message purpose"
+    },
+    "payload": {
+      "type": "object",
+      "description": "Message body; schema varies by type"
+    },
+    "correlation_id": {
+      "type": "string",
+      "description": "ID to match request/response pairs"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp of message creation"
+    }
+  },
+  "additionalProperties": false
+}

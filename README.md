@@ -138,6 +138,33 @@ This option spins up the complete production-ready stack in separate containeriz
 
 ---
 
+### Option C: Deploying to Google Cloud Run (Serverless Sidecar)
+
+You can deploy the entire frontend-backend sidecar stack to Google Cloud Run with a single command. 
+
+1. **Authentication**: Make sure you have the Google Cloud SDK installed and run:
+   ```bash
+   gcloud auth login
+   ```
+2. **Execute Deployment Script**:
+   * **Windows (PowerShell)**:
+     ```powershell
+     ./deploy_gcp.ps1
+     ```
+   * **macOS/Linux (Bash)**:
+     ```bash
+     chmod +x deploy_gcp.sh
+     ./deploy_gcp.sh
+     ```
+3. **Execution Steps**: The script will automatically:
+   * Prompt you for your GCP Project ID, Region, and Gemini API Key.
+   * Enable the required APIs (`run.googleapis.com`, `artifactregistry.googleapis.com`, `cloudbuild.googleapis.com`).
+   * Compile and push the backend and Nginx-frontend Docker images via Cloud Build.
+   * Generate a Knative service configuration (`service.yaml`) and deploy the sidecars under one managed HTTPS URL.
+   * Clean up local keys/temporary configuration files.
+
+---
+
 ### Option B: Running Bare-Metal (Local Development)
 
 Use this option to run without Docker (e.g., if you are modifying frontend CSS/React files or Python backend endpoints locally).

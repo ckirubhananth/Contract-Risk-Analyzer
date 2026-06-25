@@ -26,26 +26,26 @@ The application is containerized using Docker and runs as two main services coor
 
 ```mermaid
 graph TD
-    User([User Browser]) -->|HTTP Port 80| NginxProxy[Nginx Proxy Container]
-    NginxProxy -->|Static Files| ReactApp[React Frontend Build]
-    NginxProxy -->|Proxy /api/*| FastAPI[FastAPI Backend Container]
+    User(["User Browser"]) -->|HTTP Port 80| NginxProxy["Nginx Proxy Container"]
+    NginxProxy -->|Static Files| ReactApp["React Frontend Build"]
+    NginxProxy -->|Proxy /api/*| FastAPI["FastAPI Backend Container"]
     
-    FastAPI -->|Extracts Text| Ingestion[Ingestion Service]
-    FastAPI -->|Segments Heuristics| Segmentation[Segmentation Service]
+    FastAPI -->|Extracts Text| Ingestion["Ingestion Service"]
+    FastAPI -->|Segments Heuristics| Segmentation["Segmentation Service"]
     
-    subgraph Parallel Cognitive Processing (Gemini API)
-        FastAPI -->|ThreadPool Concurrency| Classification[Classification Service]
-        FastAPI -->|ThreadPool Concurrency| Scoring[Scoring Service]
+    subgraph "Parallel Cognitive Processing (Gemini API)"
+        FastAPI -->|ThreadPool Concurrency| Classification["Classification Service"]
+        FastAPI -->|ThreadPool Concurrency| Scoring["Scoring Service"]
     end
     
-    Classification -->|Batch Clauses| Gemini[Google Gemini 2.5 Flash]
+    Classification -->|Batch Clauses| Gemini["Google Gemini 2.5 Flash"]
     Scoring -->|Batch Clauses| Gemini
     
-    FastAPI -->|Summarizes Insights| Summarization[Summarization Service]
-    FastAPI -->|Aggregates Charts| Visualization[Visualization Service]
+    FastAPI -->|Summarizes Insights| Summarization["Summarization Service"]
+    FastAPI -->|Aggregates Charts| Visualization["Visualization Service"]
     
     FastAPI -->|JSON Schema Guardrail| NginxProxy
-    FastAPI -->|Mounts Output Logs| HostVolume[(Host Volumes: /outputs & /temp_uploads)]
+    FastAPI -->|Mounts Output Logs| HostVolume[("Host Volumes: /outputs & /temp_uploads")]
 ```
 
 ### Services & Data Flow:

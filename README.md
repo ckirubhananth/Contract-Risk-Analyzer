@@ -101,7 +101,7 @@ Contract-Risk-Analyzer/
 │   ├── golden_dataset.json     # Accuracy baseline
 │   └── trajectory_schema.json  # Observability schema
 ├── Contract/
-│   └── Belmont.pdf             # Sample GAA Lease Contract (9.9MB)
+│   └── sample_contract.pdf     # Sample Contract Document
 ├── outputs/                    # Output logs (trajectory, report, charts)
 ├── docker-compose.yml          # Container stack orchestrator
 ├── Dockerfile.backend          # Backend Docker image spec
@@ -191,6 +191,6 @@ Verify the complete web pipeline (uploading, API call routing, rendering, and pe
     node frontend/test_ui.cjs
     ```
 
-Upon successful completion, these tests capture screenshots showing the fully rendered dashboard, saved to:
-*   `belmont_docker_dashboard.png` (Docker run)
-*   `belmont_dashboard.png` (Bare-metal run)
+Upon successful completion, these tests capture screenshots showing the fully rendered dashboard, dynamically named based on the input file base name, saved to:
+*   `[contract_name]_docker_dashboard.png` (Docker run)
+*   `[contract_name]_dashboard.png` (Bare-metal run)

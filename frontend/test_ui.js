@@ -2,8 +2,20 @@ const puppeteer = require('puppeteer');
 const path = require('path');
 const fs = require('fs');
 
-const screenshotPath = path.join('C:', 'Users', 'Kirubhananth', '.gemini', 'antigravity', 'brain', '229bc39a-f5fd-4403-b289-9fc5661d868c', 'belmont_dashboard.png');
-const contractPath = path.join(__dirname, '..', 'Contract', 'Belmont.pdf');
+const contractDir = path.join(__dirname, '..', 'Contract');
+const pdfFiles = fs.readdirSync(contractDir).filter(file => file.toLowerCase().endsWith('.pdf'));
+
+if (pdfFiles.length === 0) {
+  console.error('No PDF contract found in Contract/ directory!');
+  process.exit(1);
+}
+
+const contractFile = pdfFiles[0];
+const contractPath = path.join(contractDir, contractFile);
+const contractBase = path.basename(contractFile, path.extname(contractFile)).toLowerCase();
+
+const screenshotName = `${contractBase}_dashboard.png`;
+const screenshotPath = path.join('C:', 'Users', 'Kirubhananth', '.gemini', 'antigravity', 'brain', '229bc39a-f5fd-4403-b289-9fc5661d868c', screenshotName);
 
 (async () => {
   console.log('Launching headless browser...');
